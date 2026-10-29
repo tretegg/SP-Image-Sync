@@ -1,8 +1,10 @@
 from collections import defaultdict
 
+import httpx
 from pydantic import BaseModel, ConfigDict
-from sp_client import SpTask
-from whiteboard import TaskStatus, WhiteboardItem
+
+from task_adder.sp_client import SpTask, add_task, complete_task, reopen_task
+from task_adder.whiteboard import TaskStatus, WhiteboardItem
 
 
 class SyncPlan(BaseModel):
@@ -41,3 +43,12 @@ def plan_sync(board_items: list[WhiteboardItem], sp_tasks: list[SpTask]) -> Sync
 
 def normalize_title(title: str) -> str:
     return "".join(title.split()).lower()
+
+
+def apply_plan(client: httpx.Client, plan: SyncPlan) -> None:
+    for title in plan.add:
+        add_task(client, title)
+    for task in plan.complete:
+        complete_task(client, task.task_id)
+    for task in plan.reopen:
+        reopen_task(client, task.task_id)

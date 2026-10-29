@@ -1,7 +1,7 @@
 import pytest
-from sp_client import SpTask
-from sync import normalize_title, plan_sync
-from whiteboard import TaskStatus, WhiteboardItem
+from task_adder.sp_client import SpTask
+from task_adder.sync import normalize_title, plan_sync
+from task_adder.whiteboard import TaskStatus, WhiteboardItem
 
 
 def test_not_done_no_match_adds_task():

@@ -35,6 +35,19 @@ def list_tasks(client: httpx.Client) -> list[SpTask]:
     return TASKS_LIST_ADAPTER.validate_python(response.json()["data"])
 
 
+def _set_task_done(client: httpx.Client, task_id: str, done: bool) -> None:
+    response = client.patch(f"/tasks/{task_id}", json={"isDone": done})
+    response.raise_for_status()
+
+
+def complete_task(client: httpx.Client, task_id: str):
+    _set_task_done(client, task_id, True)
+
+
+def reopen_task(client: httpx.Client, task_id: str):
+    _set_task_done(client, task_id, False)
+
+
 def main() -> None:
     load_dotenv()
     api_token = os.environ["SP_TOKEN"]
@@ -42,7 +55,8 @@ def main() -> None:
 
     with httpx.Client(base_url=BASE_URL, headers=headers) as client:
         ensure_sp_reachable(client)
-        print(list_tasks(client))
+        # print(list_tasks(client))
+        complete_task(client, "tC1Fo_rR3IdyhuOFn7KCn")
 
 
 if __name__ == "__main__":

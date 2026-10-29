@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, TypeAdapter
 
 GEMINI_MODEL = "gemini-3.5-flash-lite"
 PROMPT = """The image is a handwritten to-do whiteboard.
@@ -31,6 +31,9 @@ class WhiteboardItem(BaseModel):
     status: TaskStatus
 
 
+WHITEBOARD_LIST_ADAPTER = TypeAdapter(list[WhiteboardItem])
+
+
 def read_whiteboard(
     client: genai.Client, image: bytes, media_type: str
 ) -> list[WhiteboardItem]:
@@ -48,7 +51,7 @@ def read_whiteboard(
                     response_schema=list[WhiteboardItem],
                 ),
             )
-            return response.parsed
+            return WHITEBOARD_LIST_ADAPTER.validate_python(response.parsed)
         # Timeouts are not retried to limit worst-case latency
         except errors.APIError as e:
             print(e.code)
@@ -56,6 +59,8 @@ def read_whiteboard(
                 raise
 
             time.sleep(2**attempt)
+
+    raise AssertionError("unreachable")
 
 
 def main() -> None:

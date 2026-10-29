@@ -12,6 +12,7 @@ dependencies = [
     "google-genai>=2.33.0",
     "httpx>=0.28.1",
     "pydantic>=2.14.1",
+    "pyright>=1.1.414",
     "python-dotenv>=1.2.4",
 ]
 
@@ -28,5 +29,5 @@ dev = [
     "ruff>=0.17.3",
 ]
 
-[tool.pytest.ini_options]
-pythonpath = ["./src/task_adder"]
+[tool.pyright]
+typeCheckingMode = "standard"
