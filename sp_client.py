@@ -2,8 +2,19 @@ import os
 
 import httpx
 from dotenv import load_dotenv
+from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
 
 BASE_URL = "http://127.0.0.1:3876"
+
+class SpTask(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    title: str
+    is_done: bool = Field(validation_alias='isDone')
+    task_id: str = Field(validation_alias='id')
+    time_estimate: int = Field(validation_alias='timeEstimate')
+    time_spent: int = Field(validation_alias='timeSpent')
+
+tasks_list_adapter = TypeAdapter(list[SpTask])
 
 
 def ensure_sp_reachable(client: httpx.Client) -> None:
@@ -18,6 +29,13 @@ def add_task(client: httpx.Client, task_title: str) -> str:
     return response.json()["data"]["id"]
 
 
+def list_tasks(client: httpx.Client) -> list[SpTask]:
+    response = client.get("/tasks")
+    response.raise_for_status()
+    tasks_list = tasks_list_adapter.validate_python(response.json()["data"])
+    return tasks_list
+
+
 def main() -> None:
     load_dotenv()
     api_token = os.environ["SP_TOKEN"]
@@ -25,8 +43,7 @@ def main() -> None:
 
     with httpx.Client(base_url=BASE_URL, headers=headers) as client:
         ensure_sp_reachable(client)
-        print(add_task(client, "Test task"))
-
+        print(list_tasks(client))
 
 if __name__ == "__main__":
     main()
