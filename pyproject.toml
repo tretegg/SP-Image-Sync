@@ -1,0 +1,25 @@
+[project]
+name = "task-adder"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "tretegg", email = "treteggyt@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.4",
+]
+
+[project.scripts]
+task-adder = "task_adder:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.3",
+]
