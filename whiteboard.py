@@ -51,7 +51,7 @@ def read_whiteboard(
                 ),
             )
             return response.parsed
-        # Timeouts are not retried because of the worst-case latency
+        # Timeouts are not retried to limit worst-case latency
         except errors.APIError as e:
             print(e.code)
             if e.code not in RETRYABLE_CODES or attempt == MAX_ATTEMPTS - 1:
@@ -71,7 +71,7 @@ def main() -> None:
     time_before = time.perf_counter()
     result = read_whiteboard(client, image, "image/jpeg")
     time_taken = time.perf_counter() - time_before
-    print(time_taken)
+    print(f"Time taken: {time_taken}")
 
     for item in result:
         print(item)
