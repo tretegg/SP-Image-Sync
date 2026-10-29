@@ -2,19 +2,21 @@ import os
 
 import httpx
 from dotenv import load_dotenv
-from pydantic import BaseModel, ConfigDict, TypeAdapter, Field
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 BASE_URL = "http://127.0.0.1:3876"
+
 
 class SpTask(BaseModel):
     model_config = ConfigDict(frozen=True)
     title: str
-    is_done: bool = Field(validation_alias='isDone')
-    task_id: str = Field(validation_alias='id')
-    time_estimate: int = Field(validation_alias='timeEstimate')
-    time_spent: int = Field(validation_alias='timeSpent')
+    is_done: bool = Field(validation_alias="isDone")
+    task_id: str = Field(validation_alias="id")
+    time_estimate: int = Field(validation_alias="timeEstimate")
+    time_spent: int = Field(validation_alias="timeSpent")
 
-tasks_list_adapter = TypeAdapter(list[SpTask])
+
+TASKS_LIST_ADAPTER = TypeAdapter(list[SpTask])
 
 
 def ensure_sp_reachable(client: httpx.Client) -> None:
@@ -32,8 +34,7 @@ def add_task(client: httpx.Client, task_title: str) -> str:
 def list_tasks(client: httpx.Client) -> list[SpTask]:
     response = client.get("/tasks")
     response.raise_for_status()
-    tasks_list = tasks_list_adapter.validate_python(response.json()["data"])
-    return tasks_list
+    return TASKS_LIST_ADAPTER.validate_python(response.json()["data"])
 
 
 def main() -> None:
@@ -44,6 +45,7 @@ def main() -> None:
     with httpx.Client(base_url=BASE_URL, headers=headers) as client:
         ensure_sp_reachable(client)
         print(list_tasks(client))
+
 
 if __name__ == "__main__":
     main()
