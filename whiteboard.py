@@ -18,7 +18,7 @@ done will be a filled square next to the task title.
 Ignore everything outside of the whiteboard."""
 MAX_ATTEMPTS = 4
 RETRYABLE_CODES = {429, 500, 503, 504}
-TIMEOUT = 10
+TIMEOUT_MS = 10000
 
 
 class TaskStatus(Enum):
@@ -51,6 +51,7 @@ def read_whiteboard(
                 ),
             )
             return response.parsed
+        # Timeouts are not retried because of the worst-case latency
         except errors.APIError as e:
             print(e.code)
             if e.code not in RETRYABLE_CODES or attempt == MAX_ATTEMPTS - 1:
@@ -63,7 +64,7 @@ def main() -> None:
     load_dotenv()
     api_token = os.environ["GEMINI_API_KEY"]
 
-    client = genai.Client(api_key=api_token, http_options={"timeout": TIMEOUT})
+    client = genai.Client(api_key=api_token, http_options={"timeout": TIMEOUT_MS})
 
     image = Path("whiteboard.jpg").read_bytes()
 
