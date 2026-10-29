@@ -2,7 +2,7 @@ import os
 
 import httpx
 from dotenv import load_dotenv
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, TypeAdapter
 
 BASE_URL = "http://127.0.0.1:3876"
 
@@ -10,10 +10,8 @@ BASE_URL = "http://127.0.0.1:3876"
 class SpTask(BaseModel):
     model_config = ConfigDict(frozen=True)
     title: str
-    is_done: bool = Field(validation_alias="isDone")
-    task_id: str = Field(validation_alias="id")
-    time_estimate: int = Field(validation_alias="timeEstimate")
-    time_spent: int = Field(validation_alias="timeSpent")
+    is_done: bool = Field(validation_alias=AliasChoices("isDone", "is_done"))
+    task_id: str = Field(validation_alias=AliasChoices("id", "task_id"))
 
 
 TASKS_LIST_ADAPTER = TypeAdapter(list[SpTask])
@@ -32,7 +30,7 @@ def add_task(client: httpx.Client, task_title: str) -> str:
 
 
 def list_tasks(client: httpx.Client) -> list[SpTask]:
-    response = client.get("/tasks")
+    response = client.get("/tasks", params={"includeDone": True})
     response.raise_for_status()
     return TASKS_LIST_ADAPTER.validate_python(response.json()["data"])
 

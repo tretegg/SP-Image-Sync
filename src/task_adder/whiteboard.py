@@ -11,9 +11,8 @@ from pydantic import BaseModel, ConfigDict
 GEMINI_MODEL = "gemini-3.5-flash-lite"
 PROMPT = """The image is a handwritten to-do whiteboard.
 Extract the title of each task alongside their statuses.
-The statuses can be one of: not_done, partially_done, done.
+The statuses can be either: not_done or done.
 not_done will be an empty square next to the task title.
-partially_done will be a partially filled square next to the task title.
 done will be a filled square next to the task title.
 Ignore everything outside of the whiteboard."""
 MAX_ATTEMPTS = 4
@@ -23,7 +22,6 @@ TIMEOUT_MS = 10000
 
 class TaskStatus(Enum):
     NOT_DONE = "not_done"
-    PARTIALLY_DONE = "partially_done"
     DONE = "done"
 
 
@@ -66,7 +64,7 @@ def main() -> None:
 
     client = genai.Client(api_key=api_token, http_options={"timeout": TIMEOUT_MS})
 
-    image = Path("whiteboard.jpg").read_bytes()
+    image = Path("whiteboard2.jpg").read_bytes()
 
     time_before = time.perf_counter()
     result = read_whiteboard(client, image, "image/jpeg")
