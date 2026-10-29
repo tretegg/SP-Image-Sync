@@ -18,7 +18,7 @@ def add_task(client: httpx.Client, task_title: str) -> str:
     return response.json()["data"]["id"]
 
 
-def main():
+def main() -> None:
     load_dotenv()
     api_token = os.environ["SP_TOKEN"]
     headers = {"Authorization": f"Bearer {api_token}"}
