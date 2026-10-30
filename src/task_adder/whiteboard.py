@@ -14,6 +14,7 @@ done will be a filled square next to the task title.
 Ignore everything outside of the whiteboard."""
 MAX_ATTEMPTS = 4
 RETRYABLE_CODES = {429, 500, 503, 504}
+TIMEOUT_MS = 10000
 
 
 class TaskStatus(Enum):
@@ -34,7 +35,6 @@ def read_whiteboard(
     client: genai.Client, image: bytes, media_type: str
 ) -> list[WhiteboardItem]:
     for attempt in range(MAX_ATTEMPTS):
-        print(f"Trying attempt {attempt + 1}:")
         try:
             response = client.models.generate_content(
                 model=GEMINI_MODEL,

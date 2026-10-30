@@ -1,6 +1,7 @@
-
 import httpx
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, TypeAdapter
+
+BASE_URL = "http://127.0.0.1:3876"
 
 
 class SpTask(BaseModel):

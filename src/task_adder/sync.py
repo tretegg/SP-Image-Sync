@@ -13,6 +13,15 @@ class SyncPlan(BaseModel):
     complete: list[SpTask]
     add: list[str]
 
+    def is_empty(self) -> bool:
+        return not (self.reopen or self.complete or self.add)
+
+    def describe(self) -> str:
+        lines = [f"ADD: {title}" for title in self.add]
+        lines += [f"COMPLETE: {task.title}" for task in self.complete]
+        lines += [f"REOPEN: {task.title}" for task in self.reopen]
+        return "\n".join(lines)
+
 
 def plan_sync(board_items: list[WhiteboardItem], sp_tasks: list[SpTask]) -> SyncPlan:
     sp_dict: defaultdict[str, list[SpTask]] = defaultdict(list)

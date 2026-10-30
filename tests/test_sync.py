@@ -1,7 +1,7 @@
 import pytest
 
 from task_adder.sp_client import SpTask
-from task_adder.sync import normalize_title, plan_sync
+from task_adder.sync import SyncPlan, normalize_title, plan_sync
 from task_adder.whiteboard import TaskStatus, WhiteboardItem
 
 
@@ -160,3 +160,15 @@ def test_matches_ignore_case_and_spacing():
 )
 def test_normalize_title_matches(a: str, b: str):
     assert normalize_title(a) == normalize_title(b)
+
+
+def test_plan_is_empty():
+    assert SyncPlan(reopen=[], complete=[], add=[]).is_empty()
+
+
+def test_plan_is_not_empty():
+    assert not SyncPlan(
+        reopen=[SpTask(title="Calc HW", is_done=False, task_id="1")],
+        complete=[],
+        add=[],
+    ).is_empty()
