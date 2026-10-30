@@ -1,4 +1,5 @@
 import pytest
+
 from task_adder.sp_client import SpTask
 from task_adder.sync import normalize_title, plan_sync
 from task_adder.whiteboard import TaskStatus, WhiteboardItem

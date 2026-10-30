@@ -1,10 +1,6 @@
-import os
 
 import httpx
-from dotenv import load_dotenv
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, TypeAdapter
-
-BASE_URL = "http://127.0.0.1:3876"
 
 
 class SpTask(BaseModel):
@@ -49,14 +45,7 @@ def reopen_task(client: httpx.Client, task_id: str):
 
 
 def main() -> None:
-    load_dotenv()
-    api_token = os.environ["SP_TOKEN"]
-    headers = {"Authorization": f"Bearer {api_token}"}
-
-    with httpx.Client(base_url=BASE_URL, headers=headers) as client:
-        ensure_sp_reachable(client)
-        # print(list_tasks(client))
-        complete_task(client, "tC1Fo_rR3IdyhuOFn7KCn")
+    pass
 
 
 if __name__ == "__main__":

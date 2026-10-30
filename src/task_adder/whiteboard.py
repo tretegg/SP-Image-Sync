@@ -1,9 +1,6 @@
-import os
 import time
 from enum import Enum
-from pathlib import Path
 
-from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
 from pydantic import BaseModel, ConfigDict, TypeAdapter
@@ -17,7 +14,6 @@ done will be a filled square next to the task title.
 Ignore everything outside of the whiteboard."""
 MAX_ATTEMPTS = 4
 RETRYABLE_CODES = {429, 500, 503, 504}
-TIMEOUT_MS = 10000
 
 
 class TaskStatus(Enum):
@@ -64,20 +60,7 @@ def read_whiteboard(
 
 
 def main() -> None:
-    load_dotenv()
-    api_token = os.environ["GEMINI_API_KEY"]
-
-    client = genai.Client(api_key=api_token, http_options={"timeout": TIMEOUT_MS})
-
-    image = Path("whiteboard2.jpg").read_bytes()
-
-    time_before = time.perf_counter()
-    result = read_whiteboard(client, image, "image/jpeg")
-    time_taken = time.perf_counter() - time_before
-    print(f"Time taken: {time_taken}")
-
-    for item in result:
-        print(item)
+    pass
 
 
 if __name__ == "__main__":
