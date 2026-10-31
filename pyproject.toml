@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-task-adder = "task_adder.cli:main"
+task-adder = "sp-image-sync.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.12.19,<0.13.0"]
