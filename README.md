@@ -41,25 +41,39 @@ Note: Free tier Gemini requests may be used by Google to improve their models.
 ## Usage
 
 ```bash
-uv run sp-image-sync path/to/whiteboard.jpg
+uv run sp-image-sync path/to/whiteboard_example.jpg
 ```
 
 Use `--dry-run` to print the sync plan without prompting or applying it:
 
 ```bash
-uv run sp-image-sync path/to/whiteboard.jpg --dry-run
+uv run sp-image-sync path/to/whiteboard_example.jpg --dry-run
 ```
+
+<img src="whiteboard_example.jpg" alt="whiteboard example image" height="300">
 
 Example output:
 
 ```
-ADD: Do homework
-COMPLETE: Buy groceries
-REOPEN: Call dentist
-Apply plan? (y/n):
+ADD: Design contact info
+COMPLETE: Finish design proj
+REOPEN: Synthesis essay
+REOPEN: Calc HW
 ```
 
 If nothing changed, it just prints `Nothing to sync`.
+
+## Design decisions
+
+- **The whiteboard is the source of truth.** Sync is one-way: whiteboard → SP. If SP and the whiteboard disagree about a task's status, SP is changed to match the whiteboard. Consequence: if you complete something in SP directly instead of on the whiteboard, the next sync will reopen it, since as far as the whiteboard is concerned it's still open.
+- **`plan_sync` is a pure function.** It takes whiteboard items and SP tasks as plain data and returns a `SyncPlan`, no SP client, no Gemini client, no I/O. That's what lets the test suite cover matching, duplicates, and normalization without Super Productivity running or a Gemini API key.
+- **Reruns are safe.** Nothing is tracked between runs; each sync recomputes the plan from whatever SP and the whiteboard currently look like. Running the same image twice (or re-running after declining or partially applying a plan) just reflects what's still mismatched; already-synced items produce no further action.
+
+## Limitations
+
+- **Same machine only.** The tool talks to SP's local REST API on `127.0.0.1`, so it has to run on the same machine Super Productivity is running on.
+- **CLI only.** There's no GUI; you run it from a terminal and confirm the plan at a prompt.
+- **Duplicate titles are handled conservatively.** If several SP tasks share a normalized title, checking that title done on the whiteboard completes every open duplicate, but unchecking it reopens only one of the done duplicates.
 
 ## Development
 
@@ -68,6 +82,10 @@ uv run pytest       # tests
 uv run ruff check   # lint
 uv run pyright       # type check
 ```
+
+## Roadmap
+
+- A phone app, so you can snap the whiteboard photo and sync directly from your phone instead of transferring it to the machine running SP.
 
 ## License
 
