@@ -80,7 +80,7 @@ If nothing changed, it just prints `Nothing to sync`.
 ```bash
 uv run pytest       # tests
 uv run ruff check   # lint
-uv run pyright       # type check
+uv run pyright      # type check
 ```
 
 ## Roadmap
